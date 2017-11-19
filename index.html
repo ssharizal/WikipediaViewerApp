@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<title> Wikipedia Viewer App </title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+Coder: Syed Sharizal
+# URL use to get a random Wikipedia article: https://en.wikipedia.org/wiki/Special:Random.
+# Wikipedia's API: https://www.mediawiki.org/wiki/API:Main_page.
+
+# Link to experiment with Wikipedia's API.
+https://en.wikipedia.org/wiki/Special:ApiSandbox#action=query&titles=Main%20Page&prop=revisions&rvprop=content&format=jsonfm
+
+-->
+
+<head>
+    <!-- Bootstrap, fontawesome, jQuery-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fa fa-wikipedia-w"></i>ikipedia Viewer App</h1>
+        <div class="p-5 input-group col-md-12">
+            <input class="form-control " id="search" placeholder="Can I help you search anything from Wikipedia!">
+            <div class="input-group-addon "><button title="Search" onclick="searchWiki()"><i class="fa fa-search"></i></button></div>
+            <div class="input-group-addon "><a href="https://en.wikipedia.org/wiki/Special:Random" target="_blank"><button title="Random Search"><i class="fa fa-random"></button></a></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="p-5 card"></div>
+    </div>
+
+    <script>
+        function searchWiki() {
+            var arrResults = [];
+            var formSearch = "'" + $('#search').val() + "'";
+            var api = "https://en.wikipedia.org/w/api.php?";
+            var urlString = api + "action=query&list=search&format=json&srsearch=" + formSearch;
+            $.ajax({
+                url: urlString,
+                dataType: 'jsonp',
+                type: 'POST',
+                headers: {
+                    'Api-User-Agent': 'Example/1.0'
+                },
+                success: function(data) {
+                    var resArr = data.query.search;
+                    // Clear the previous elements to the page
+                    $('.card').empty();
+
+                    for (var result in resArr) {
+                        arrResults.push(resArr[result].title, resArr[result].snippet);
+                        html = '<div class="card-body"><div class="card-title"><a href="https://en.wikipedia.org/wiki/' + resArr[result].title + '"target="_blank"><h3>' + resArr[result].title + '</h3><p class="card-text">' + resArr[result].snippet + '</p></a></div></div>';
+
+                        // Displays the elements to the page
+                        $('.card').append(html);
+                    }
+
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
